@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev":"nodemon api/index.js",
+    "dev": "nodemon api/index.js",
     "start": "node api/index.js"
   },
   "repository": {
@@ -20,6 +20,8 @@
   "homepage": "https://github.com/Dinesh89-D/MERN-APP#readme",
   "description": "",
   "dependencies": {
-    "express": "^5.1.0"
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "mongoose": "^8.13.1"
   }
 }
