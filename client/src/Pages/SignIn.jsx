@@ -1,57 +1,81 @@
-import React, { useState } from 'react'
-import {Link,useNavigate} from 'react-router-dom'
+ import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { signInStart, signInFailure, signInSuccess } from '../Redux/User/userSlice'; 
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function SignIn() {
-  const [formData,setFormData] = useState({});
-  const [error,setError] = useState(false);
-  const [loading,setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const { loading, error } = useSelector((state) => state.user);
+  console.log(loading,error),false | 'User not found'
   const navigate = useNavigate();
-  const handleChange =(e)=>{
-    setFormData({...formData,[e.target.id]:e.target.value});
-  }
-  const handleSubmit = async(e)=>{
+  const dispatch = useDispatch();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      setError(false);
-      const res = await fetch ('/api/auth/signin',{
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
+      dispatch(signInStart());
+      const res = await fetch('/api/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        body:JSON.stringify(formData),
+        body: JSON.stringify(formData),
       });
       const data = await res.json();
-      setLoading(false);
-      setError(false);
-      if(data.sucess===false){
-        setError(true);
+      if (data.success === false) {
         return;
       }
-      navigate('/');
+      dispatch(signInSuccess(data));
+      navigate('/'); 
     } catch (error) {
+      dispatch(signInFailure(error));
       
-      setError(true);
     }
-  }
+  };
   return (
-    <div className='p-3 max-w-lg mx-auto'>
-      <h1 className='text-3xl text-center font-semibold my-7'>Sign In</h1>
-      <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-        
-
-        <input type="email" placeholder='Email' id='email' className='bg-slate-100 p-3 rounded-lg' onChange={handleChange}/>
-
-        <input type="password" placeholder='Password' id='password' className='bg-slate-100 p-3 rounded-lg' onChange={handleChange}/>
-        <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>{loading?'Loading...':'Sign In'}</button>
+    <div className="p-3 max-w-lg mx-auto">
+      <h1 className="text-3xl text-center font-semibold my-7">Sign In</h1>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <input
+          type="email"
+          placeholder="Email"
+          id="email"
+          value={formData.email} // Bind value to formData
+          className="bg-slate-100 p-3 rounded-lg"
+          onChange={handleChange}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          id="password"
+          value={formData.password} // Bind value to formData
+          className="bg-slate-100 p-3 rounded-lg"
+          onChange={handleChange}
+        />
+        <button
+          disabled={loading}
+          className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+        >
+          {loading ? 'Loading...' : 'Sign In'}
+        </button>
       </form>
 
-      <div className='flex- gap-2 mt-5'>
+      <div className="flex gap-2 mt-5">
         <p>Don't have an account?</p>
-        <Link to='/signup'>
-        <span className='text-blue-500'>Sign Up</span></Link>
+        <Link to="/signup">
+          <span className="text-blue-500">Sign Up</span>
+        </Link>
       </div>
-      <p className='text-red-700 mt-5 '>{error&&"Something went wrong!"}</p>
+
+      {/* Display error message */}
+      <p className="text-red-700 mt-5">{error ? error.message|| 'Something Went Wrong!':""}</p>
     </div>
-  )
+  );
 }
