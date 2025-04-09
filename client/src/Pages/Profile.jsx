@@ -45,10 +45,9 @@ export default function Profile() {
 
         <img src={currentUser.profilePicture} alt="profile" className='h-24 w-24 self-center cursor-pointer rounded-full object-cover mt-2' onClick={()=>fileRef.current.click()}/>
 
-        <p className='text-sm self-center'>
+        {/* <p className='text-sm self-center'>
           {imageError ? (<span className='text-red-700'>Image upload failed</span>): imagePercent > 0 && imagePercent < 100 ? (<span className='text-green-700'>{`Uploading {imagePercent}'%'`}</span>) : imagePercent === 100 ? (<span className='text-green-700'>Image uploaded</span>) : null}
-
-        </p>
+        </p> */}
 
         <input defaultValue={currentUser.username} type="text" id='username' placeholder='Username' className='bg-slate-100 rounded-lg p-3 ' />
 
